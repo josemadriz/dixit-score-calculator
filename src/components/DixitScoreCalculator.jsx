@@ -1,4 +1,3 @@
-import "tailwindcss/tailwind.css";
 import PlayerSetup from "./PlayerSetup";
 import GameScreen from "./GameScreen";
 import { useGameState } from "../hooks/useGameState";
