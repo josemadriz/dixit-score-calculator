@@ -1,8 +1,93 @@
 import { useState } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Tooltip, ClickAwayListener } from "@mui/material";
 import { ImCross } from "react-icons/im";
+import { Icon } from "@iconify/react";
 import DixitLogo from "/images/dixit.png";
-import { GAME_CONFIG } from "../constants/gameConfig";
+import { GAME_CONFIG, PLAYER_COLORS } from "../constants/gameConfig";
+
+function SwatchPalette({ playerIndex, currentColor, takenColors, onSelect, onClose }) {
+  return (
+    <div className="grid grid-cols-4 gap-2 p-1">
+      {PLAYER_COLORS.map((color) => {
+        const taken = takenColors.includes(color) && color !== currentColor;
+        return (
+          <button
+            key={color}
+            type="button"
+            disabled={taken}
+            onClick={() => { onSelect(playerIndex, "color", color); onClose(); }}
+            aria-label={`Select color ${color}`}
+            className={`w-9 h-9 rounded-lg border-2 transition-all duration-150
+              ${
+                color === currentColor
+                  ? "border-gray-800 scale-110 shadow-md"
+                  : taken
+                    ? "ring-gray-400 ring-2 opacity-25 ring-offset-0 cursor-not-allowed"
+                    : "border-transparent hover:scale-110 hover:border-gray-500 cursor-pointer"
+              }`}
+            style={{ backgroundColor: color }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function ColorPicker({ playerIndex, currentColor, takenColors, onSelect }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <ClickAwayListener onClickAway={() => setOpen(false)}>
+      <div>
+        <Tooltip
+          open={open}
+          disableHoverListener
+          disableFocusListener
+          disableTouchListener
+          arrow
+          placement="bottom"
+          title={
+            <SwatchPalette
+              playerIndex={playerIndex}
+              currentColor={currentColor}
+              takenColors={takenColors}
+              onSelect={onSelect}
+              onClose={() => setOpen(false)}
+            />
+          }
+          slotProps={{
+            tooltip: {
+              sx: {
+                bgcolor: "white",
+                border: "1px solid",
+                borderColor: "grey.200",
+                borderRadius: 3,
+                boxShadow: 6,
+                p: 1.5,
+                maxWidth: "none",
+              },
+            },
+            arrow: { sx: { color: "white" } },
+            popper: {
+              sx: {
+                zIndex: (theme) => theme.zIndex.tooltip + 1000,
+              },
+            },
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Pick player color"
+            className="focus:outline-none hover:scale-110 transition-transform duration-150"
+          >
+            <Icon icon="mdi:rabbit" width={48} height={48} style={{ color: currentColor }} />
+          </button>
+        </Tooltip>
+      </div>
+    </ClickAwayListener>
+  );
+}
 
 export default function PlayerSetup({ 
   players, 
@@ -13,6 +98,7 @@ export default function PlayerSetup({
 }) {
   const canAddPlayer = players.length < GAME_CONFIG.MAX_PLAYERS;
   const canRemovePlayer = players.length > GAME_CONFIG.MIN_PLAYERS;
+  const takenColors = players.map((p) => p.color);
 
   return (
     <div>
@@ -21,7 +107,7 @@ export default function PlayerSetup({
       </div>
       <div className="p-6 max-w-md mx-auto bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-sm shadow-xl border border-gray-200/50 rounded-xl mt-6">
         <h1 className="text-2xl font-bold mb-4 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Dixit Player Setup
+          Player Setup
         </h1>
 
         <div className="space-y-4">
@@ -30,21 +116,12 @@ export default function PlayerSetup({
               key={player.id}
               className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
             >
-              <div className="relative w-12 h-12">
-                <div
-                  className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-                  style={{ backgroundColor: player.color }}
-                  role="img"
-                  aria-label={`${player.name}'s color`}
-                />
-                <input
-                  type="color"
-                  value={player.color}
-                  onChange={(e) => onUpdatePlayer(index, "color", e.target.value)}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  aria-label={`Change ${player.name}'s color`}
-                />
-              </div>
+              <ColorPicker
+                playerIndex={index}
+                currentColor={player.color}
+                takenColors={takenColors}
+                onSelect={onUpdatePlayer}
+              />
 
               <TextField
                 label="Player Name"

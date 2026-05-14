@@ -1,4 +1,5 @@
 import { Button, TableContainer } from "@mui/material";
+import { Icon } from "@iconify/react";
 
 export default function ScoreTable({ 
   players, 
@@ -33,10 +34,11 @@ export default function ScoreTable({
                   className="px-2 py-4 text-center truncate flex items-center gap-2"
                   style={{ color: player.color }}
                 >
-                  <span
-                    className="w-3 h-3 rounded-full shadow-md border-2 border-white"
-                    style={{ backgroundColor: player.color }}
-                    role="img"
+                  <Icon
+                    icon="mdi:rabbit"
+                    width={18}
+                    height={18}
+                    style={{ color: player.color }}
                     aria-label={`${player.name}'s color`}
                   />
                   <span>{player.name}</span>
@@ -64,7 +66,7 @@ export default function ScoreTable({
       </div>
       <Button
         onClick={onSubmitScores}
-        className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 !text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 ease-in-out"
+        className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 !text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
         aria-label="Submit all player scores"
       >
         🎯 Submit Scores

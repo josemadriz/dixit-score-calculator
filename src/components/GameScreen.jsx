@@ -3,6 +3,7 @@ import ScoreGrid from "./ScoreGrid";
 import ScoreTable from "./ScoreTable";
 import GameDialogs from "./GameDialogs";
 import { usePlayerPositions } from "../utils/gameUtils";
+import { Icon } from "@iconify/react";
 
 export default function GameScreen({ 
   gameState, 
@@ -45,12 +46,13 @@ export default function GameScreen({
             <div className="absolute w-full h-full flex items-center justify-between px-4">
               <div className="flex w-full justify-between">
                 {startPositions.map(({ player }) => (
-                  <div
+                  <Icon
                     key={player.id}
-                    className="w-4 h-4 rounded-full shadow-xl border border-black/60"
-                    style={{ backgroundColor: player.color }}
+                    icon="mdi:rabbit"
+                    width={24}
+                    height={24}
+                    style={{ color: player.color, filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
                     title={player.name}
-                    role="img"
                     aria-label={`${player.name} at start position`}
                   />
                 ))}

@@ -6,16 +6,15 @@ export const GAME_CONFIG = {
   DEFAULT_PLAYER_COUNT: 3,
 };
 
-// Color palette for players - using accessible colors
 export const PLAYER_COLORS = [
-  "#FF6B6B", // Red
-  "#4ECDC4", // Teal
-  "#45B7D1", // Blue
-  "#96CEB4", // Green
-  "#FFEAA7", // Yellow
-  "#DDA0DD", // Plum
-  "#98D8C8", // Mint
-  "#F7DC6F", // Gold
+  "#F72585", // Hot pink
+  "#FCBF49", // Bright yellow
+  "#2DC653", // Emerald green
+  "#F77F00", // Vivid orange
+  "#118AB2", // Ocean blue
+  "#E63946", // Crimson red
+  "#9B5DE5", // Purple
+  "#444444", // Mint teal
 ];
 
 // Helper functions

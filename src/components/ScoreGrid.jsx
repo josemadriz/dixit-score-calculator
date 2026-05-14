@@ -1,6 +1,7 @@
 import { GAME_CONFIG } from "../constants/gameConfig";
+import { Icon } from "@iconify/react";
 
-export default function ScoreGrid({ players, gridPositions }) {
+export default function ScoreGrid({ gridPositions }) {
   return (
     <div className="grid grid-cols-5 gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-inner border border-gray-200/50">
       {Array.from({ length: GAME_CONFIG.VICTORY_SCORE }, (_, i) => (
@@ -12,16 +13,20 @@ export default function ScoreGrid({ players, gridPositions }) {
           {gridPositions
             .filter(pos => pos.score === i + 1)
             .map(({ player, topPosition, leftPosition }) => (
-              <div
+              <Icon
                 key={player.id}
-                className="absolute w-3 h-3 rounded-full shadow-lg border-2 border-white"
+                icon="mdi:rabbit"
+                width={18}
+                height={18}
+                className="absolute"
                 style={{
-                  backgroundColor: player.color,
+                  color: player.color,
                   top: `${topPosition}%`,
                   left: leftPosition,
+                  filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.4))",
+                  transform: "translate(-50%, -50%)",
                 }}
                 title={player.name}
-                role="img"
                 aria-label={`${player.name} at position ${i + 1}`}
               />
             ))}
