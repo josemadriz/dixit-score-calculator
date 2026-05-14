@@ -35,6 +35,16 @@ export const createInitialPlayers = () =>
     createInitialPlayer(i)
   );
 
+/** Same roster shape as {@link createInitialPlayers}: count, empty names, default colors per index. */
+export function isDefaultPlayerSetup(players) {
+  if (players.length !== GAME_CONFIG.DEFAULT_PLAYER_COUNT) return false;
+  return players.every((player, index) => {
+    if (player.name.trim() !== "") return false;
+    if (player.color !== PLAYER_COLORS[index % PLAYER_COLORS.length]) return false;
+    return true;
+  });
+}
+
 export function createInitialGameState() {
   return {
     players: createInitialPlayers(),

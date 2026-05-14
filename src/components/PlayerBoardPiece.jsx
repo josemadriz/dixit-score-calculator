@@ -44,8 +44,17 @@ export default function PlayerBoardPiece({
         height={size}
         style={{
           color: player.color,
-          filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.45))",
+          filter: `
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(0px 0px 0.4px #ffffff) 
+          drop-shadow(-3px 6px 8px rgba(0,0,0,0.55))
+          `,
           pointerEvents: "none",
+          textShadow: '0 0 2px #fff',
           userSelect: "none",
           display: "block",
         }}

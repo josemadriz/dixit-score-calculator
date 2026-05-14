@@ -14,6 +14,7 @@ export default function DixitScoreCalculator() {
     startGame,
     submitScores,
     resetGame,
+    resetPlayerSetupToDefaults,
     handleLogoClick,
     handleMouseMove,
     closeWinnerDialog,
@@ -36,7 +37,7 @@ export default function DixitScoreCalculator() {
       }}
       onMouseMove={storageReady ? handleMouseMove : undefined}
     >
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-3xl mx-auto">
         {storageReady && (
           <>
             <GameDialogs
@@ -53,6 +54,7 @@ export default function DixitScoreCalculator() {
                 onUpdatePlayer={updatePlayer}
                 onAddPlayer={addPlayer}
                 onRemovePlayer={removePlayer}
+                onResetPlayerSetupToDefaults={resetPlayerSetupToDefaults}
                 onStartGame={startGame}
               />
             ) : (

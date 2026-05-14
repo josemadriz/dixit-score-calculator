@@ -3,7 +3,7 @@ import { TextField, Button, Tooltip, ClickAwayListener } from "@mui/material";
 import { ImCross } from "react-icons/im";
 import { Icon } from "@iconify/react";
 import DixitLogo from "/images/dixit.png";
-import { GAME_CONFIG, getDefaultPlayerName, PLAYER_COLORS } from "../constants/gameConfig";
+import { GAME_CONFIG, getDefaultPlayerName, isDefaultPlayerSetup, PLAYER_COLORS } from "../constants/gameConfig";
 
 function SwatchPalette({ playerIndex, currentColor, takenColors, onSelect, onClose }) {
   return (
@@ -93,24 +93,30 @@ export default function PlayerSetup({
   players, 
   onUpdatePlayer, 
   onAddPlayer, 
-  onRemovePlayer, 
+  onRemovePlayer,
+  onResetPlayerSetupToDefaults,
   onStartGame 
 }) {
   const canAddPlayer = players.length < GAME_CONFIG.MAX_PLAYERS;
   const canRemovePlayer = players.length > GAME_CONFIG.MIN_PLAYERS;
   const takenColors = players.map((p) => p.color);
+  const setupIsDefaults = isDefaultPlayerSetup(players);
 
   return (
-    <div>
+    <div className="max-w-5xl mx-auto">
       <div className="flex justify-center m-4">
         <img src={DixitLogo} alt="Dixit Logo" className="w-42 drop-shadow-lg" />
       </div>
-      <div className="p-6 max-w-md mx-auto bg-linear-to-br from-white/95 to-gray-50/95 backdrop-blur-sm shadow-xl border border-gray-200/50 rounded-xl mt-6">
-        <h1 className="text-2xl font-bold mb-4 text-center bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+      <div className="container px-6 py-3 mx-auto bg-linear-to-br from-white/55 to-gray-50/95 backdrop-blur-sm shadow-xl border border-gray-200/50 rounded-xl mt-6">
+        <h1 className="text-xl font-bold mb-5 text-center text-gray-600 bg-clip-text">
           Player Setup
         </h1>
 
-        <div className="space-y-4">
+        <div
+          className={`grid gap-4 grid-cols-1 ${
+            players.length > 4 ? "md:grid-cols-2" : "md:grid-cols-1"
+          }`}
+        >
           {players.map((player, index) => (
             <div
               key={player.id}
@@ -150,40 +156,56 @@ export default function PlayerSetup({
           ))}
         </div>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-between">
-          <Button
-            variant="contained"
-            onClick={onAddPlayer}
-            disabled={!canAddPlayer}
-            aria-label="Add new player"
-            className="flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
-            sx={{
-              background: canAddPlayer 
-                ? 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)'
-                : 'linear-gradient(45deg, #ccc 0%, #999 100%)',
-              '&:hover': {
+        <div className="mt-6 flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 justify-between">
+            <Button
+              variant="contained"
+              onClick={onAddPlayer}
+              disabled={!canAddPlayer}
+              aria-label="Add new player"
+              className="flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
+              sx={{
                 background: canAddPlayer 
-                  ? 'linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%)'
+                  ? 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)'
                   : 'linear-gradient(45deg, #ccc 0%, #999 100%)',
-              }
-            }}
-          >
-            Add Player ({players.length}/{GAME_CONFIG.MAX_PLAYERS})
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={onStartGame}
-            aria-label="Start the game"
-            className="flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
-            sx={{
-              background: 'linear-gradient(45deg, #11998e 0%, #38ef7d 100%)',
-              '&:hover': {
-                background: 'linear-gradient(45deg, #0f8a7a 0%, #2dd66a 100%)',
-              }
-            }}
-          >
-            🎮 Start Game
-          </Button>
+                '&:hover': {
+                  background: canAddPlayer 
+                    ? 'linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%)'
+                    : 'linear-gradient(45deg, #ccc 0%, #999 100%)',
+                }
+              }}
+            >
+              Add Player ({players.length}/{GAME_CONFIG.MAX_PLAYERS})
+            </Button>
+            {!setupIsDefaults && (
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                onClick={onResetPlayerSetupToDefaults}
+                aria-label="Clear all player names and reset to three default players"
+                className="normal-case px-4"
+                startIcon={<Icon icon="mdi:restore" width={20} height={20} />}
+              >
+                Clear Players
+              </Button>
+            )}
+            <Button 
+              variant="contained" 
+              onClick={onStartGame}
+              aria-label="Start the game"
+              className="flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
+              sx={{
+                background: 'linear-gradient(45deg, #11998e 0%, #38ef7d 100%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #0f8a7a 0%, #2dd66a 100%)',
+                }
+              }}
+            >
+              <Icon icon="mdi:rabbit" width={20} height={20} />
+              &nbsp;Start Game
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ export default function ScoreGrid({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-2 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-inner border border-gray-200/50">
+    <div className="grid grid-cols-5 gap-2 p-4 bg-linear-to-br from-gray-400 to-gray-500 rounded-b-xl shadow-inner">
       {Array.from({ length: GAME_CONFIG.VICTORY_SCORE }, (_, i) => {
         const cellScore = i + 1;
         const isOver = dragOverScore === cellScore;

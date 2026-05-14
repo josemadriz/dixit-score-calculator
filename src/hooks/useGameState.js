@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import {
   GAME_CONFIG,
   createInitialGameState,
+  createInitialPlayers,
   getDefaultPlayerName,
   PLAYER_COLORS,
 } from "../constants/gameConfig";
@@ -155,11 +156,36 @@ export function useGameState() {
     });
   }, [validateScore]);
 
-  /** Full reset: scores cleared and UI returns to player setup (gameStarted: false). */
+  /**
+   * Return to player setup: clear scores and round state but keep the same
+   * roster (names, colors, player count).
+   */
   const resetGame = useCallback(() => {
     pendingBoardMoveRef.current = null;
     setBoardMoveConfirm(null);
-    setGameState(createInitialGameState());
+    setGameState((prev) => ({
+      ...prev,
+      gameStarted: false,
+      players: prev.players.map((player) => ({
+        ...player,
+        scores: [],
+        total: 0,
+        boardPositionOverride: null,
+      })),
+      roundScores: Array(prev.players.length).fill(""),
+      winner: null,
+      showWinnerDialog: false,
+      showResetDialog: false,
+    }));
+  }, []);
+
+  /** Setup screen: three default players, empty names, default colors. */
+  const resetPlayerSetupToDefaults = useCallback(() => {
+    setGameState((prev) => ({
+      ...prev,
+      players: createInitialPlayers(),
+      roundScores: Array(GAME_CONFIG.DEFAULT_PLAYER_COUNT).fill(""),
+    }));
   }, []);
 
   const handleLogoClick = useCallback(() => {
@@ -169,8 +195,8 @@ export function useGameState() {
   }, [gameState.gameStarted]);
 
   const handleMouseMove = useCallback((e) => {
-    const x = (e.clientX / window.innerWidth) * 100;
-    const y = (e.clientY / window.innerHeight) * 100;
+    const x = (e.clientX / window.innerWidth) * 20;
+    const y = (e.clientY / window.innerHeight) * 20;
     setGameState(prev => ({ ...prev, bgPosition: { x, y } }));
   }, []);
 
@@ -272,6 +298,7 @@ export function useGameState() {
     startGame,
     submitScores,
     resetGame,
+    resetPlayerSetupToDefaults,
     handleLogoClick,
     handleMouseMove,
     closeWinnerDialog,
