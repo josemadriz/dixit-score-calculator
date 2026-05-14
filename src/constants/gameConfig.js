@@ -26,6 +26,8 @@ export const createInitialPlayer = (index) => ({
   color: PLAYER_COLORS[index % PLAYER_COLORS.length],
   scores: [],
   total: 0,
+  /** null = use total; number 0–VICTORY_SCORE = manual board position */
+  boardPositionOverride: null,
 });
 
 export const createInitialPlayers = () =>

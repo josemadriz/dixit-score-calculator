@@ -1,5 +1,6 @@
 import PlayerSetup from "./PlayerSetup";
 import GameScreen from "./GameScreen";
+import GameDialogs from "./GameDialogs";
 import { useGameState } from "../hooks/useGameState";
 
 export default function DixitScoreCalculator() {
@@ -17,6 +18,12 @@ export default function DixitScoreCalculator() {
     handleMouseMove,
     closeWinnerDialog,
     closeResetDialog,
+    boardMoveConfirm,
+    requestBoardMove,
+    confirmBoardMove,
+    cancelBoardMove,
+    onBoardPieceDragStart,
+    onBoardPieceDragEnd,
   } = useGameState();
 
   return (
@@ -30,26 +37,40 @@ export default function DixitScoreCalculator() {
       onMouseMove={storageReady ? handleMouseMove : undefined}
     >
       <div className="max-w-lg mx-auto">
-        {storageReady &&
-          (!gameState.gameStarted ? (
-            <PlayerSetup
-              players={gameState.players}
-              onUpdatePlayer={updatePlayer}
-              onAddPlayer={addPlayer}
-              onRemovePlayer={removePlayer}
-              onStartGame={startGame}
-            />
-          ) : (
-            <GameScreen
-              gameState={gameState}
-              onLogoClick={handleLogoClick}
-              onScoreChange={handleScoreChange}
-              onSubmitScores={submitScores}
+        {storageReady && (
+          <>
+            <GameDialogs
+              showWinnerDialog={gameState.showWinnerDialog}
+              showResetDialog={gameState.showResetDialog}
+              winner={gameState.winner}
               onCloseWinnerDialog={closeWinnerDialog}
               onCloseResetDialog={closeResetDialog}
               onResetGame={resetGame}
             />
-          ))}
+            {!gameState.gameStarted ? (
+              <PlayerSetup
+                players={gameState.players}
+                onUpdatePlayer={updatePlayer}
+                onAddPlayer={addPlayer}
+                onRemovePlayer={removePlayer}
+                onStartGame={startGame}
+              />
+            ) : (
+              <GameScreen
+                gameState={gameState}
+                onLogoClick={handleLogoClick}
+                onScoreChange={handleScoreChange}
+                onSubmitScores={submitScores}
+                onPlayerBoardMoveRequest={requestBoardMove}
+                boardMoveConfirm={boardMoveConfirm}
+                onConfirmBoardMove={confirmBoardMove}
+                onCancelBoardMove={cancelBoardMove}
+                onBoardPieceDragStart={onBoardPieceDragStart}
+                onBoardPieceDragEnd={onBoardPieceDragEnd}
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import { Button, TableContainer } from "@mui/material";
+import { Button, TableContainer, Tooltip, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { effectiveBoardScore } from "../utils/gameUtils";
 
 export default function ScoreTable({ 
   players, 
@@ -44,20 +45,91 @@ export default function ScoreTable({
                   <span>{player.name}</span>
                 </td>
                 <td className="px-4 py-2 text-center">
-                  <input
-                    type="number"
-                    min="0"
-                    className="w-14 p-2 text-sm text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-                    value={roundScores[index]}
-                    onChange={(e) => onScoreChange(index, e.target.value)}
-                    aria-label={`Enter score for ${player.name}`}
-                  />
+                  <div className="inline-flex items-center justify-center gap-1">
+                    <IconButton
+                      type="button"
+                      onClick={() => {
+                        const raw = roundScores[index];
+                        const n = parseInt(raw, 10);
+                        const cur = Number.isFinite(n) && n > 0 ? n : 0;
+                        onScoreChange(index, String(Math.max(0, cur - 1)));
+                      }}
+                      aria-label={`Decrease round score for ${player.name}`}
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        minWidth: 34,
+                        color: "#fff",
+                        backgroundColor: player.color,
+                        boxShadow: 1,
+                        "&:hover": {
+                          backgroundColor: player.color,
+                          filter: "brightness(0.88)",
+                        },
+                      }}
+                      className="rounded-full!"
+                    >
+                      <Icon icon="mdi:minus" width={26} style={{ color: "#fff" }} />
+                    </IconButton>
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="numeric"
+                      className="w-14 py-2 px-1 text-base tabular-nums text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      value={roundScores[index]}
+                      onChange={(e) => onScoreChange(index, e.target.value)}
+                      aria-label={`Enter score for ${player.name}`}
+                    />
+                    <IconButton
+                      type="button"
+                      onClick={() => {
+                        const raw = roundScores[index];
+                        const n = parseInt(raw, 10);
+                        const cur = Number.isFinite(n) && n >= 0 ? n : 0;
+                        onScoreChange(index, String(cur + 1));
+                      }}
+                      aria-label={`Increase round score for ${player.name}`}
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        minWidth: 34,
+                        color: "#fff",
+                        backgroundColor: player.color,
+                        boxShadow: 1,
+                        "&:hover": {
+                          backgroundColor: player.color,
+                          filter: "brightness(0.88)",
+                        },
+                      }}
+                      className="!rounded-full"
+                    >
+                      <Icon icon="mdi:plus" width={26} style={{ color: "#fff" }} />
+                    </IconButton>
+                  </div>
                 </td>
                 <td className="px-4 py-2 text-sm text-center">
                   {player.scores.join(", ") || "No scores yet"}
                 </td>
                 <td className="px-4 py-2 text-sm text-center font-semibold">
-                  {player.total}
+                  {player.boardPositionOverride != null ? (
+                    <Tooltip
+                      title={`Score: ${player.total} — board position manually set to ${effectiveBoardScore(player)}`}
+                      arrow
+                      disableInteractive
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        <span>{effectiveBoardScore(player)}</span>
+                        <Icon
+                          icon="mdi:cursor-move"
+                          width={13}
+                          className="text-amber-500 shrink-0"
+                          aria-label="manual override"
+                        />
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    player.total
+                  )}
                 </td>
               </tr>
             ))}

@@ -41,6 +41,17 @@ function isValidGameState(data) {
     for (const s of p.scores) {
       if (typeof s !== "number" || !Number.isFinite(s)) return false;
     }
+    const o = p.boardPositionOverride;
+    if (o != null) {
+      if (
+        typeof o !== "number" ||
+        !Number.isInteger(o) ||
+        o < 0 ||
+        o > GAME_CONFIG.VICTORY_SCORE
+      ) {
+        return false;
+      }
+    }
   }
   if (data.winner != null && typeof data.winner !== "string") return false;
   if (typeof data.showWinnerDialog !== "boolean") return false;
@@ -75,7 +86,14 @@ export async function loadPersistedGameState() {
       getReq.onsuccess = () => resolve(getReq.result);
       getReq.onerror = () => reject(getReq.error);
     });
-    return isValidGameState(raw) ? raw : null;
+    if (!isValidGameState(raw)) return null;
+    return {
+      ...raw,
+      players: raw.players.map((p) => ({
+        ...p,
+        boardPositionOverride: p.boardPositionOverride ?? null,
+      })),
+    };
   } catch {
     return null;
   } finally {
