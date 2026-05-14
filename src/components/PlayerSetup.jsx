@@ -3,7 +3,7 @@ import { TextField, Button, Tooltip, ClickAwayListener } from "@mui/material";
 import { ImCross } from "react-icons/im";
 import { Icon } from "@iconify/react";
 import DixitLogo from "/images/dixit.png";
-import { GAME_CONFIG, PLAYER_COLORS } from "../constants/gameConfig";
+import { GAME_CONFIG, getDefaultPlayerName, PLAYER_COLORS } from "../constants/gameConfig";
 
 function SwatchPalette({ playerIndex, currentColor, takenColors, onSelect, onClose }) {
   return (
@@ -105,8 +105,8 @@ export default function PlayerSetup({
       <div className="flex justify-center m-4">
         <img src={DixitLogo} alt="Dixit Logo" className="w-42 drop-shadow-lg" />
       </div>
-      <div className="p-6 max-w-md mx-auto bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-sm shadow-xl border border-gray-200/50 rounded-xl mt-6">
-        <h1 className="text-2xl font-bold mb-4 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+      <div className="p-6 max-w-md mx-auto bg-linear-to-br from-white/95 to-gray-50/95 backdrop-blur-sm shadow-xl border border-gray-200/50 rounded-xl mt-6">
+        <h1 className="text-2xl font-bold mb-4 text-center bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           Player Setup
         </h1>
 
@@ -126,10 +126,12 @@ export default function PlayerSetup({
               <TextField
                 label="Player Name"
                 variant="outlined"
+                placeholder={`Player Name ${index + 1}`}
                 value={player.name}
                 onChange={(e) => onUpdatePlayer(index, "name", e.target.value)}
-                className="flex-grow"
-                inputProps={{ "aria-label": `Player ${index + 1} name` }}
+                className="grow"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ "aria-label": `${getDefaultPlayerName(index)} name` }}
               />
 
               <button
@@ -140,7 +142,7 @@ export default function PlayerSetup({
                     ? "text-red-600 hover:text-red-800 hover:bg-red-50 hover:scale-110"
                     : "opacity-50 cursor-not-allowed text-gray-400"
                 }`}
-                aria-label={`Remove ${player.name}`}
+                aria-label={`Remove ${player.name.trim() || getDefaultPlayerName(index)}`}
               >
                 <ImCross />
               </button>

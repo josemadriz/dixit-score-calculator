@@ -18,9 +18,11 @@ export const PLAYER_COLORS = [
 ];
 
 // Helper functions
+export const getDefaultPlayerName = (index) => `Player ${index + 1}`;
+
 export const createInitialPlayer = (index) => ({
   id: `player-${index + 1}`,
-  name: `Player ${index + 1}`,
+  name: "",
   color: PLAYER_COLORS[index % PLAYER_COLORS.length],
   scores: [],
   total: 0,
@@ -29,4 +31,16 @@ export const createInitialPlayer = (index) => ({
 export const createInitialPlayers = () =>
   Array.from({ length: GAME_CONFIG.DEFAULT_PLAYER_COUNT }, (_, i) =>
     createInitialPlayer(i)
-  ); 
+  );
+
+export function createInitialGameState() {
+  return {
+    players: createInitialPlayers(),
+    gameStarted: false,
+    roundScores: Array(GAME_CONFIG.DEFAULT_PLAYER_COUNT).fill(""),
+    winner: null,
+    showWinnerDialog: false,
+    showResetDialog: false,
+    bgPosition: { x: 50, y: 50 },
+  };
+}

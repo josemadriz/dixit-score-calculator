@@ -5,6 +5,7 @@ import { useGameState } from "../hooks/useGameState";
 export default function DixitScoreCalculator() {
   const {
     gameState,
+    storageReady,
     handleScoreChange,
     updatePlayer,
     addPlayer,
@@ -26,28 +27,29 @@ export default function DixitScoreCalculator() {
         backgroundPosition: `${gameState.bgPosition.x}% ${gameState.bgPosition.y}%`,
         backgroundAttachment: "fixed",
       }}
-      onMouseMove={handleMouseMove}
+      onMouseMove={storageReady ? handleMouseMove : undefined}
     >
       <div className="max-w-lg mx-auto">
-        {!gameState.gameStarted ? (
-          <PlayerSetup
-            players={gameState.players}
-            onUpdatePlayer={updatePlayer}
-            onAddPlayer={addPlayer}
-            onRemovePlayer={removePlayer}
-            onStartGame={startGame}
-          />
-        ) : (
-          <GameScreen
-            gameState={gameState}
-            onLogoClick={handleLogoClick}
-            onScoreChange={handleScoreChange}
-            onSubmitScores={submitScores}
-            onCloseWinnerDialog={closeWinnerDialog}
-            onCloseResetDialog={closeResetDialog}
-            onResetGame={resetGame}
-          />
-        )}
+        {storageReady &&
+          (!gameState.gameStarted ? (
+            <PlayerSetup
+              players={gameState.players}
+              onUpdatePlayer={updatePlayer}
+              onAddPlayer={addPlayer}
+              onRemovePlayer={removePlayer}
+              onStartGame={startGame}
+            />
+          ) : (
+            <GameScreen
+              gameState={gameState}
+              onLogoClick={handleLogoClick}
+              onScoreChange={handleScoreChange}
+              onSubmitScores={submitScores}
+              onCloseWinnerDialog={closeWinnerDialog}
+              onCloseResetDialog={closeResetDialog}
+              onResetGame={resetGame}
+            />
+          ))}
       </div>
     </div>
   );

@@ -1,16 +1,40 @@
-import { useState, useCallback, useMemo } from "react";
-import { GAME_CONFIG, createInitialPlayers, PLAYER_COLORS } from "../constants/gameConfig";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import {
+  GAME_CONFIG,
+  createInitialGameState,
+  getDefaultPlayerName,
+  PLAYER_COLORS,
+} from "../constants/gameConfig";
+import {
+  loadPersistedGameState,
+  persistGameState,
+} from "../utils/gameStateStorage";
+
+const PERSIST_DEBOUNCE_MS = 300;
 
 export function useGameState() {
-  const [gameState, setGameState] = useState({
-    players: createInitialPlayers(),
-    gameStarted: false,
-    roundScores: Array(GAME_CONFIG.DEFAULT_PLAYER_COUNT).fill(""),
-    winner: null,
-    showWinnerDialog: false,
-    showResetDialog: false,
-    bgPosition: { x: 50, y: 50 },
-  });
+  const [gameState, setGameState] = useState(createInitialGameState);
+  const [storageHydrated, setStorageHydrated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const saved = await loadPersistedGameState();
+      if (!cancelled && saved) setGameState(saved);
+      if (!cancelled) setStorageHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!storageHydrated) return;
+    const t = setTimeout(() => {
+      persistGameState(gameState);
+    }, PERSIST_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [gameState, storageHydrated]);
 
   // Memoized values for performance
   const canAddPlayer = useMemo(
@@ -59,7 +83,7 @@ export function useGameState() {
         ...prev.players,
         {
           id: `player-${prev.players.length + 1}`,
-          name: `Player ${prev.players.length + 1}`,
+          name: "",
           color: PLAYER_COLORS[prev.players.length % PLAYER_COLORS.length],
           scores: [],
           total: 0,
@@ -83,6 +107,10 @@ export function useGameState() {
     setGameState(prev => ({
       ...prev,
       gameStarted: true,
+      players: prev.players.map((player, index) => ({
+        ...player,
+        name: player.name.trim() || getDefaultPlayerName(index),
+      })),
       roundScores: Array(prev.players.length).fill(""),
     }));
   }, []);
@@ -115,15 +143,7 @@ export function useGameState() {
   }, [validateScore]);
 
   const resetGame = useCallback(() => {
-    setGameState({
-      players: createInitialPlayers(),
-      gameStarted: false,
-      roundScores: Array(GAME_CONFIG.DEFAULT_PLAYER_COUNT).fill(""),
-      winner: null,
-      showWinnerDialog: false,
-      showResetDialog: false,
-      bgPosition: { x: 50, y: 50 },
-    });
+    setGameState(createInitialGameState());
   }, []);
 
   const handleLogoClick = useCallback(() => {
@@ -148,6 +168,7 @@ export function useGameState() {
 
   return {
     gameState,
+    storageReady: storageHydrated,
     canAddPlayer,
     canRemovePlayer,
     handleScoreChange,
