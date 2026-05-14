@@ -10,7 +10,12 @@ import {
   loadPersistedGameState,
   persistGameState,
 } from "../utils/gameStateStorage";
-import { effectiveBoardScore } from "../utils/gameUtils";
+import {
+  effectiveBoardScore,
+  adjustScoresForTargetTotal,
+  pickGridSlotForPlayerMove,
+  resolveBoardGridSlotsAfterRound,
+} from "../utils/gameUtils";
 
 const PERSIST_DEBOUNCE_MS = 300;
 
@@ -56,9 +61,8 @@ export function useGameState() {
 
   // Input validation function
   const validateScore = useCallback((value) => {
-    const numValue = parseInt(value);
-    if (isNaN(numValue)) return 0;
-    if (numValue < 0) return 0; // Prevent negative scores
+    const numValue = parseInt(value, 10);
+    if (Number.isNaN(numValue)) return 0;
     return numValue;
   }, []);
 
@@ -95,6 +99,7 @@ export function useGameState() {
           scores: [],
           total: 0,
           boardPositionOverride: null,
+          boardGridSlotIndex: null,
         },
       ],
       roundScores: [...prev.roundScores, ""],
@@ -121,6 +126,7 @@ export function useGameState() {
         ...player,
         name: player.name.trim() || getDefaultPlayerName(index),
         boardPositionOverride: null,
+        boardGridSlotIndex: null,
       })),
       roundScores: Array(prev.players.length).fill(""),
     }));
@@ -130,7 +136,7 @@ export function useGameState() {
     pendingBoardMoveRef.current = null;
     setBoardMoveConfirm(null);
     setGameState(prev => {
-      const newPlayers = prev.players.map((player, index) => {
+      const newPlayersBase = prev.players.map((player, index) => {
         const newScore = validateScore(prev.roundScores[index]);
         const newTotal = player.total + newScore;
 
@@ -141,6 +147,11 @@ export function useGameState() {
           boardPositionOverride: null,
         };
       });
+
+      const newPlayers = resolveBoardGridSlotsAfterRound(
+        prev.players,
+        newPlayersBase
+      );
 
       const winningPlayer = newPlayers.find(
         player => player.total >= GAME_CONFIG.VICTORY_SCORE
@@ -171,6 +182,7 @@ export function useGameState() {
         scores: [],
         total: 0,
         boardPositionOverride: null,
+        boardGridSlotIndex: null,
       })),
       roundScores: Array(prev.players.length).fill(""),
       winner: null,
@@ -213,14 +225,25 @@ export function useGameState() {
       Math.max(0, Math.floor(slot)),
       GAME_CONFIG.VICTORY_SCORE
     );
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       players: prev.players.map((p) => {
         if (p.id !== playerId) return p;
-        if (clamped === p.total || (clamped === 0 && p.total === 0)) {
-          return { ...p, boardPositionOverride: null };
-        }
-        return { ...p, boardPositionOverride: clamped };
+        const { scores: newScores, total: newTotal } = adjustScoresForTargetTotal(
+          p.scores,
+          clamped
+        );
+        const gridSlot =
+          newTotal <= 0
+            ? null
+            : pickGridSlotForPlayerMove(prev.players, playerId, newTotal);
+        return {
+          ...p,
+          scores: newScores,
+          total: newTotal,
+          boardPositionOverride: null,
+          boardGridSlotIndex: gridSlot,
+        };
       }),
     }));
   }, []);

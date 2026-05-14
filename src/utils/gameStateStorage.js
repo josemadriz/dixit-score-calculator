@@ -1,4 +1,7 @@
-import { GAME_CONFIG } from "../constants/gameConfig";
+import {
+  GAME_CONFIG,
+  SCORE_GRID_PIECE_ANCHORS,
+} from "../constants/gameConfig";
 
 const DB_NAME = "dixit-score-calculator";
 const DB_VERSION = 1;
@@ -52,6 +55,17 @@ function isValidGameState(data) {
         return false;
       }
     }
+    const g = p.boardGridSlotIndex;
+    if (g != null) {
+      if (
+        typeof g !== "number" ||
+        !Number.isInteger(g) ||
+        g < 0 ||
+        g >= SCORE_GRID_PIECE_ANCHORS.length
+      ) {
+        return false;
+      }
+    }
   }
   if (data.winner != null && typeof data.winner !== "string") return false;
   if (typeof data.showWinnerDialog !== "boolean") return false;
@@ -92,6 +106,7 @@ export async function loadPersistedGameState() {
       players: raw.players.map((p) => ({
         ...p,
         boardPositionOverride: p.boardPositionOverride ?? null,
+        boardGridSlotIndex: p.boardGridSlotIndex ?? null,
       })),
     };
   } catch {

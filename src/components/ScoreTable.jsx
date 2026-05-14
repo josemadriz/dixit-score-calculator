@@ -53,14 +53,22 @@ export default function ScoreTable({
                     <span>{player.name}</span>
                   </td>
                   <td className="px-4 py-2 text-center">
-                    <div className="inline-flex items-center justify-center gap-1">
+                    {/* Prevent HTML5 drop from inserting drag text/plain (player id) into inputs */}
+                    <div
+                      className="inline-flex items-center justify-center gap-1"
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "none";
+                      }}
+                      onDrop={(e) => e.preventDefault()}
+                    >
                       <IconButton
                         type="button"
                         onClick={() => {
                           const raw = roundScores[index];
                           const n = parseInt(raw, 10);
-                          const cur = Number.isFinite(n) && n > 0 ? n : 0;
-                          onScoreChange(index, String(Math.max(0, cur - 1)));
+                          const cur = Number.isFinite(n) ? n : 0;
+                          onScoreChange(index, String(cur - 1));
                         }}
                         aria-label={`Decrease round score for ${player.name}`}
                         sx={{
@@ -81,11 +89,15 @@ export default function ScoreTable({
                       </IconButton>
                       <input
                         type="number"
-                        min="0"
                         inputMode="numeric"
                         className="w-14 py-2 px-1 text-base tabular-nums text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         value={roundScores[index]}
                         onChange={(e) => onScoreChange(index, e.target.value)}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "none";
+                        }}
+                        onDrop={(e) => e.preventDefault()}
                         aria-label={`Enter score for ${player.name}`}
                       />
                       <IconButton
@@ -93,7 +105,7 @@ export default function ScoreTable({
                         onClick={() => {
                           const raw = roundScores[index];
                           const n = parseInt(raw, 10);
-                          const cur = Number.isFinite(n) && n >= 0 ? n : 0;
+                          const cur = Number.isFinite(n) ? n : 0;
                           onScoreChange(index, String(cur + 1));
                         }}
                         aria-label={`Increase round score for ${player.name}`}

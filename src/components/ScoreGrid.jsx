@@ -19,7 +19,7 @@ export default function ScoreGrid({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-2 p-4 bg-linear-to-br from-gray-400 to-gray-500 rounded-b-xl shadow-inner">
+    <div className="grid grid-cols-5 gap-4 p-4 bg-linear-to-br from-gray-400 to-gray-500 rounded-b-xl shadow-inner justify-center items-center">
       {Array.from({ length: GAME_CONFIG.VICTORY_SCORE }, (_, i) => {
         const cellScore = i + 1;
         const isOver = dragOverScore === cellScore;
@@ -37,11 +37,13 @@ export default function ScoreGrid({
               }
             }}
             onDrop={(e) => handleDrop(e, cellScore)}
-            className={`relative max-w-[75px] h-[75px] flex items-center justify-center border border-gray-300 bg-white hover:bg-gray-50 transition-all duration-200 ease-in-out rounded-lg shadow-sm hover:shadow-md hover:scale-105 font-medium text-gray-700 ${
+            className={`relative max-w-full h-full aspect-square flex items-center justify-center border border-gray-300 bg-gray-100 hover:bg-gray-50 transition-all duration-200 ease-in-out rounded-lg shadow-sm hover:shadow-md hover:scale-105 font-bold text-gray-400 ${
               isOver ? "ring-2 ring-emerald-500 ring-offset-1 bg-emerald-50/60" : ""
             }`}
+            aria-label={`Score ${cellScore}`}
           >
             {cellScore}
+            {/* Slots 0–7 from player.boardGridSlotIndex (random free slot when entering tile) */}
             {gridPositions
               .filter((pos) => pos.score === cellScore)
               .map(({ player, topPosition, leftPosition }) => (

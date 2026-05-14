@@ -6,6 +6,18 @@ export const GAME_CONFIG = {
   DEFAULT_PLAYER_COUNT: 3,
 };
 
+/** Per score cell: 4 corners + midpoint on each side (clockwise from top-left). */
+export const SCORE_GRID_PIECE_ANCHORS = [
+  { top: 10, left: "12%" },
+  { top: 10, left: "50%" },
+  { top: 10, left: "88%" },
+  { top: 50, left: "88%" },
+  { top: 90, left: "88%" },
+  { top: 90, left: "50%" },
+  { top: 90, left: "12%" },
+  { top: 50, left: "12%" },
+];
+
 export const PLAYER_COLORS = [
   "#F72585", // Hot pink
   "#FCBF49", // Bright yellow
@@ -28,6 +40,8 @@ export const createInitialPlayer = (index) => ({
   total: 0,
   /** null = use total; number 0–VICTORY_SCORE = manual board position */
   boardPositionOverride: null,
+  /** 0..7 anchor on current score tile; assigned when entering a cell */
+  boardGridSlotIndex: null,
 });
 
 export const createInitialPlayers = () =>

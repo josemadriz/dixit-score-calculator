@@ -58,6 +58,10 @@ export default function BoardMoveConfirmBubble({
             </span>
           </div>
 
+          <div className="text-center text-xs text-gray-600 max-w-[14rem] leading-snug">
+            The last completed round score updates so the trail matches this tile.
+          </div>
+
           {/* Action buttons */}
           <div className="flex gap-1">
             <IconButton
