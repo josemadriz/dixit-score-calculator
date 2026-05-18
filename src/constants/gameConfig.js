@@ -67,6 +67,5 @@ export function createInitialGameState() {
     winner: null,
     showWinnerDialog: false,
     showResetDialog: false,
-    bgPosition: { x: 50, y: 50 },
   };
 }

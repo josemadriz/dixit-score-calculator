@@ -206,12 +206,6 @@ export function useGameState() {
     }
   }, [gameState.gameStarted]);
 
-  const handleMouseMove = useCallback((e) => {
-    const x = (e.clientX / window.innerWidth) * 20;
-    const y = (e.clientY / window.innerHeight) * 20;
-    setGameState(prev => ({ ...prev, bgPosition: { x, y } }));
-  }, []);
-
   const closeWinnerDialog = useCallback(() => {
     setGameState(prev => ({ ...prev, showWinnerDialog: false }));
   }, []);
@@ -323,7 +317,6 @@ export function useGameState() {
     resetGame,
     resetPlayerSetupToDefaults,
     handleLogoClick,
-    handleMouseMove,
     closeWinnerDialog,
     closeResetDialog,
     boardMoveConfirm,

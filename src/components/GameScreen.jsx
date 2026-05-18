@@ -49,7 +49,8 @@ export default function GameScreen({
           color="warning"
           size="medium"
           onClick={onLogoClick}
-          className="normal-case! font-bold inline-flex items-center gap-1"          aria-haspopup="dialog"
+          className="normal-case font-bold inline-flex items-center gap-1"
+          aria-haspopup="dialog"
         >
           <Icon icon="mdi:arrow-left" width={20} height={20} />
           Back to setup

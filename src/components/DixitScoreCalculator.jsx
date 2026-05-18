@@ -16,7 +16,6 @@ export default function DixitScoreCalculator() {
     resetGame,
     resetPlayerSetupToDefaults,
     handleLogoClick,
-    handleMouseMove,
     closeWinnerDialog,
     closeResetDialog,
     boardMoveConfirm,
@@ -28,15 +27,7 @@ export default function DixitScoreCalculator() {
   } = useGameState();
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center p-4"
-      style={{
-        backgroundImage: "url('/images/bg.png')",
-        backgroundPosition: `${gameState.bgPosition.x}% ${gameState.bgPosition.y}%`,
-        backgroundAttachment: "fixed",
-      }}
-      onMouseMove={storageReady ? handleMouseMove : undefined}
-    >
+    <div className="min-h-screen bg-gray-800 p-4">
       <div className="max-w-3xl mx-auto">
         {storageReady && (
           <>

@@ -10,7 +10,7 @@ const STATE_KEY = "gameState";
 
 function isValidGameState(data) {
   if (!data || typeof data !== "object") return false;
-  const { players, roundScores, gameStarted, bgPosition } = data;
+  const { players, roundScores, gameStarted } = data;
   if (!Array.isArray(players)) return false;
   if (
     players.length < GAME_CONFIG.MIN_PLAYERS ||
@@ -22,14 +22,6 @@ function isValidGameState(data) {
     return false;
   }
   if (typeof gameStarted !== "boolean") return false;
-  if (
-    !bgPosition ||
-    typeof bgPosition !== "object" ||
-    typeof bgPosition.x !== "number" ||
-    typeof bgPosition.y !== "number"
-  ) {
-    return false;
-  }
   for (const p of players) {
     if (
       !p ||
@@ -101,7 +93,7 @@ export async function loadPersistedGameState() {
       getReq.onerror = () => reject(getReq.error);
     });
     if (!isValidGameState(raw)) return null;
-    return {
+    const loaded = {
       ...raw,
       players: raw.players.map((p) => ({
         ...p,
@@ -109,6 +101,8 @@ export async function loadPersistedGameState() {
         boardGridSlotIndex: p.boardGridSlotIndex ?? null,
       })),
     };
+    delete loaded.bgPosition;
+    return loaded;
   } catch {
     return null;
   } finally {

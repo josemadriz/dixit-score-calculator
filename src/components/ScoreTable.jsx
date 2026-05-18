@@ -12,7 +12,7 @@ export default function ScoreTable({
     <div className="flex flex-col p-3 bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl gap-2">
       <Button
         onClick={onSubmitScores}
-        className="w-full px-6 py-3 rounded-4xl! bg-linear-to-r from-blue-500 to-purple-600 text-white! font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+        className="w-full px-6 py-3 rounded-4xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
         aria-label="Submit all player scores"
       >
         🎯 Submit Scores
@@ -83,7 +83,7 @@ export default function ScoreTable({
                             filter: "brightness(0.88)",
                           },
                         }}
-                        className="rounded-full!"
+                        className="rounded-full"
                       >
                         <Icon icon="mdi:minus" width={26} style={{ color: "#fff" }} />
                       </IconButton>
@@ -121,7 +121,7 @@ export default function ScoreTable({
                             filter: "brightness(0.88)",
                           },
                         }}
-                        className="!rounded-full"
+                        className="rounded-full"
                       >
                         <Icon icon="mdi:plus" width={26} style={{ color: "#fff" }} />
                       </IconButton>
